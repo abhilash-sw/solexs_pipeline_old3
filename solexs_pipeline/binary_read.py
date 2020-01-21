@@ -3,13 +3,18 @@
 # @Date:   2019-11-13 09:55:47
 # @email: sarwade@isac.gov.in
 # @File Name: binary_read.py
-# @Project: PySOLEXS_master
+# @Project: solexs_pipeline
 
-# @Last Modified time: 2020-01-21 13:48:18
+# @Last Modified time: 2020-01-21 14:56:14
 #####################################################
 
 import os
 import numpy as np
+
+HDR_SIZE = 20 #bytes
+SPECTRAL_DATA_SIZE = 680 #bytes
+TIMING_DATA_SIZE = 60 #bytes
+
 
 class solexs_header():
     def __init__(self,hdr_data_arr):
@@ -98,7 +103,7 @@ class solexs_spectrum():
         n_data_packets = spectral_data_arr.shape[0]
         spectral_data = np.zeros((n_channels,n_data_packets))
 
-        #spectral_data_arr = self.data_full[:,hdr_size:hdr_size+spectral_data_size]
+        #spectral_data_arr = self.data_full[:,HDR_SIZE:HDR_SIZE+SPECTRAL_DATA_SIZE]
 
         for i in range(n_channels):
             spectral_data[i,:] = spectral_data_arr[:,2*i]*2**8 + spectral_data_arr[:,2*i+1] #
@@ -140,15 +145,15 @@ class SDD_data_structure():
         # data_sdd = data_full[det_id==sdd_id,:]
         # data_sdd1 = data_full[det_id==1,:]
 
-        hdr_size = 20 #bytes
-        spectral_data_size = 680 #bytes
-        timing_data_size = 60 #bytes        
+        # HDR_SIZE = 20 #bytes
+        # SPECTRAL_DATA_SIZE = 680 #bytes
+        # TIMING_DATA_SIZE = 60 #bytes        
 
-        hdr_data_arr_sdd = data_sdd[:,:hdr_size]
+        hdr_data_arr_sdd = data_sdd[:,:HDR_SIZE]
         
-        spectral_data_arr_sdd = data_sdd[:,hdr_size:hdr_size+spectral_data_size]
+        spectral_data_arr_sdd = data_sdd[:,HDR_SIZE:HDR_SIZE+SPECTRAL_DATA_SIZE]
 
-        temporal_data_arr_sdd = data_sdd[:,-timing_data_size:]
+        temporal_data_arr_sdd = data_sdd[:,-TIMING_DATA_SIZE:]
 
         
         self.hdr_data = solexs_header(hdr_data_arr_sdd)
@@ -167,11 +172,11 @@ class read_solexs_binary_data():
         self.input_filename = input_filename
         self.data_type = 'Raw'
 
-        hdr_size = 20 #bytes
-        spectral_data_size = 680 #bytes
-        timing_data_size = 60 #bytes
+        # HDR_SIZE = 20 #bytes
+        # SPECTRAL_DATA_SIZE = 680 #bytes
+        # TIMING_DATA_SIZE = 60 #bytes
 
-        self.packet_size = hdr_size + spectral_data_size + timing_data_size
+        self.packet_size = HDR_SIZE + SPECTRAL_DATA_SIZE + TIMING_DATA_SIZE
 
         # if not os.path.isfile(filename):
 
