@@ -5,7 +5,7 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-01-21 14:56:14
+# @Last Modified time: 2020-01-21 15:27:38
 #####################################################
 
 import os
@@ -134,9 +134,21 @@ class solexs_lightcurve():
             temporal_med[i,:] = temporal_data_arr[:,6*i+2]*2**8 + temporal_data_arr[:,6*i+3]
             temporal_low [i,:]= temporal_data_arr[:,6*i+4]*2**8 + temporal_data_arr[:,6*i+5]
 
-        self.high = temporal_high.T.reshape(n_data_packets*10)
-        self.med = temporal_med.T.reshape(n_data_packets*10)
-        self.low = temporal_low.T.reshape(n_data_packets*10)
+        tmp_high = temporal_high.T.reshape(n_data_packets*10)
+        tmp_med = temporal_med.T.reshape(n_data_packets*10)
+        tmp_low = temporal_low.T.reshape(n_data_packets*10)
+
+        high = np.diff(temporal_high)
+        med = np.diff(temporal_med)
+        low = np.diff(temporal_low)
+
+        high[high<0] = high[high<0] + 2**16
+        med[med<0] = med[med<0] + 2**16
+        low[low<0] = low[low<0] + 2**16
+
+        self.high = high
+        self.med = med
+        self.low = low
 
 
 class SDD_data_structure():
