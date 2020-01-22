@@ -5,11 +5,12 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-01-21 15:27:38
+# @Last Modified time: 2020-01-22 13:36:33
 #####################################################
 
 import os
 import numpy as np
+from numba import jit
 
 HDR_SIZE = 20 #bytes
 SPECTRAL_DATA_SIZE = 680 #bytes
@@ -94,22 +95,32 @@ class solexs_header():
         # # self.ref_counter = np.packbits(np.hstack((np.zeros((n_data_packets,5),dtype='uint32'),seventh_byte[:,5:],eighth_byte,ninth_byte,tenth_byte)))
         #self.ref_counter = 
 
+@jit(nopython=True,parallel=True,fastmath=True)
+def create_spectrum(spectral_data_arr,n_channels):
+    n_data_packets = spectral_data_arr.shape[0]
+    spectral_data = np.zeros((n_channels,n_data_packets))
+    for i in range(n_channels):
+        spectral_data[i,:] = spectral_data_arr[:,2*i]*2**8 + spectral_data_arr[:,2*i+1] 
+    return spectral_data
+
 
 
 class solexs_spectrum():
     n_channels = 340
     def __init__(self,spectral_data_arr,n_channels=n_channels):
-        # n_channels = 340
-        n_data_packets = spectral_data_arr.shape[0]
-        spectral_data = np.zeros((n_channels,n_data_packets))
+        
+        # n_data_packets = spectral_data_arr.shape[0]
+        # spectral_data = np.zeros((n_channels,n_data_packets))
 
-        #spectral_data_arr = self.data_full[:,HDR_SIZE:HDR_SIZE+SPECTRAL_DATA_SIZE]
+        # #spectral_data_arr = self.data_full[:,HDR_SIZE:HDR_SIZE+SPECTRAL_DATA_SIZE]
 
-        for i in range(n_channels):
-            spectral_data[i,:] = spectral_data_arr[:,2*i]*2**8 + spectral_data_arr[:,2*i+1] #
-            # spectral_data[i,:] = np.left_shift(spectral_data_arr[:,2*i],8) + spectral_data_arr[:,2*i+1]
-        # self.SDD0 = spectral_data[:,det_id==0]        
-        # self.SDD1 = spectral_data[:,det_id==1]
+        # for i in range(n_channels):
+        #     spectral_data[i,:] = spectral_data_arr[:,2*i]*2**8 + spectral_data_arr[:,2*i+1] #
+        #     # spectral_data[i,:] = np.left_shift(spectral_data_arr[:,2*i],8) + spectral_data_arr[:,2*i+1]
+
+
+        spectral_data = create_spectrum(spectral_data_arr,n_channels)
+
         self.spectra = spectral_data
 
     def add_spectra(self):
