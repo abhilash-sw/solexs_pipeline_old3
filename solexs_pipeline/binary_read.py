@@ -5,7 +5,7 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-01-22 13:37:17
+# @Last Modified time: 2020-01-23 10:28:03
 #####################################################
 
 import os
@@ -67,7 +67,7 @@ class solexs_header():
         self.timing_channel_thresh_higher = timing_channel_thresh_higher1[:,0]
 
         #fpga data subtraction
-        self.input_data_subtraction = np.left_shift(np.bitwise_and(hdr_data_arr[:,5],192),2) + np.left_shift(np.bitwise_and(hdr_data_arr[:,6],128),1) + np.bitwise_and(hdr_data_arr[:,17],128)
+        self.input_data_subtraction = np.right_shift(np.bitwise_and(hdr_data_arr[:,5],192),4) + np.right_shift(np.bitwise_and(hdr_data_arr[:,6],128),6) + np.right_shift(np.bitwise_and(hdr_data_arr[:,17],128),7)
 
         #gain selection
         self.gain = np.bitwise_and(hdr_data_arr[:,17],127)
