@@ -10,7 +10,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-#requirements = ['Click>=7.0', ]
+requirements = ['numpy','os']
 
 setup_requirements = [ ]
 
@@ -37,7 +37,7 @@ setup(
             'solexs_pipeline=solexs_pipeline.cli:main',
         ],
     },
-    #install_requires=requirements,
+    install_requires=requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
