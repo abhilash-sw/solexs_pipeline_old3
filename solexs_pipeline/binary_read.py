@@ -5,12 +5,12 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-01-23 10:28:03
+# @Last Modified time: 2020-01-23 14:09:17
 #####################################################
 
 import os
 import numpy as np
-from numba import jit, prange
+# from numba import jit#, prange
 
 HDR_SIZE = 20 #bytes
 SPECTRAL_DATA_SIZE = 680 #bytes
@@ -95,7 +95,7 @@ class solexs_header():
         # # self.ref_counter = np.packbits(np.hstack((np.zeros((n_data_packets,5),dtype='uint32'),seventh_byte[:,5:],eighth_byte,ninth_byte,tenth_byte)))
         #self.ref_counter = 
 
-@jit(nopython=True,parallel=True)
+# @jit(nopython=True)#,parallel=True)
 def create_spectrum(spectral_data_arr,n_channels):
     n_data_packets = spectral_data_arr.shape[0]
     spectral_data = np.zeros((n_channels,n_data_packets))
