@@ -5,7 +5,7 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-01-27 17:06:43
+# @Last Modified time: 2020-01-27 18:29:03
 #####################################################
 
 import os
@@ -99,7 +99,7 @@ class solexs_header():
 def create_spectrum(spectral_data_arr,n_channels):
     n_data_packets = spectral_data_arr.shape[0]
     spectral_data = np.zeros((n_channels,n_data_packets))
-    for i in prange(n_channels):
+    for i in range(n_channels):
         spectral_data[i,:] = spectral_data_arr[:,2*i]*2**8 + spectral_data_arr[:,2*i+1] 
     return spectral_data
 
