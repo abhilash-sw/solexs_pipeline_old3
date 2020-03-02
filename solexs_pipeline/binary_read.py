@@ -5,13 +5,13 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-03-02 10:26:08
+# @Last Modified time: 2020-03-02 11:19:23
 #####################################################
 
 import os
 import numpy as np
 # from numba import jit#, prange
-import .calibration_spectrum_fitting
+from . import calibration_spectrum_fitting
 
 HDR_SIZE = 20 #bytes
 SPECTRAL_DATA_SIZE = 680 #bytes
