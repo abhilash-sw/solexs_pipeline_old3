@@ -5,7 +5,7 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-02-14 14:54:32
+# @Last Modified time: 2020-03-02 10:26:08
 #####################################################
 
 import os
@@ -150,9 +150,9 @@ class solexs_lightcurve():
         tmp_med = temporal_med.T.reshape(n_data_packets*10)
         tmp_low = temporal_low.T.reshape(n_data_packets*10)
 
-        high = np.diff(tmp_high)
-        med = np.diff(tmp_med)
-        low = np.diff(tmp_low)
+        high = tmp_high#np.diff(tmp_high)
+        med = tmp_med#np.diff(tmp_med)
+        low = tmp_low#np.diff(tmp_low)
 
         high[high<0] = high[high<0] + 2**16
         med[med<0] = med[med<0] + 2**16
