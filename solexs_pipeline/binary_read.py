@@ -5,7 +5,7 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-03-02 16:01:50
+# @Last Modified time: 2020-03-02 16:13:03
 #####################################################
 
 import os
@@ -27,7 +27,7 @@ class solexs_header():
 
         self.frame_id = hdr_data_arr[:,4] # fifth byte
 
-        assert np.sum(np.diff(self.frame_id) ==  1) == len(self.frame_id), "Frame ID is not continuous"
+        assert np.sum(np.diff(self.frame_id) ==  1) == len(self.frame_id)-1, "Frame ID is not continuous"
 
 
         #sixth byte
