@@ -5,7 +5,7 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-03-02 16:13:03
+# @Last Modified time: 2020-03-09 12:47:44
 #####################################################
 
 import os
@@ -145,9 +145,9 @@ class solexs_lightcurve():
         temporal_low = np.zeros((10,n_data_packets))
 
         for i in range(10):
-            temporal_high[i,:] = temporal_data_arr[:,6*i]*2**8 + temporal_data_arr[:,6*i+1]
+            temporal_low[i,:] = temporal_data_arr[:,6*i]*2**8 + temporal_data_arr[:,6*i+1]
             temporal_med[i,:] = temporal_data_arr[:,6*i+2]*2**8 + temporal_data_arr[:,6*i+3]
-            temporal_low [i,:]= temporal_data_arr[:,6*i+4]*2**8 + temporal_data_arr[:,6*i+5]
+            temporal_high [i,:]= temporal_data_arr[:,6*i+4]*2**8 + temporal_data_arr[:,6*i+5]
 
  
         temporal_high[1:,:] = np.diff(temporal_high,axis=0)
