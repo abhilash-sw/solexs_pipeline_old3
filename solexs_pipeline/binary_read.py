@@ -5,7 +5,7 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-03-09 12:47:44
+# @Last Modified time: 2020-03-09 13:01:32
 #####################################################
 
 import os
@@ -24,6 +24,8 @@ class solexs_header():
 
         #checking for packet header F9 A4 2B B1
         self.hdr_check = (hdr_data_arr[:,0]==249) & (hdr_data_arr[:,1]==164) & (hdr_data_arr[:,2]==43) & (hdr_data_arr[:,3]==177)
+
+        assert np.sum(self.hdr_check == False) == 0, "Header inconsistent"
 
         self.frame_id = hdr_data_arr[:,4] # fifth byte
 
