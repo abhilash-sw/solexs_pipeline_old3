@@ -5,7 +5,7 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-03-09 13:01:32
+# @Last Modified time: 2020-03-09 13:05:12
 #####################################################
 
 import os
@@ -36,6 +36,15 @@ class solexs_header():
         self.det_id = np.bitwise_and(hdr_data_arr[:,5],1)
         self.flare_trigger = np.right_shift(np.bitwise_and(hdr_data_arr[:,5],2),1)
         self.shaping_time = np.right_shift(np.bitwise_and(hdr_data_arr[:,5],12),2)
+        
+        for i in range(len(self.shaping_time)):
+            if self.shaping_time[i]==0:
+                self.shaping_time[i] = 0.5
+            elif self.shaping_time[i] ==1:
+                self.shaping_time[i] = 1
+            else:
+                self.shaping_time[i] = 2
+
         self.hv_enable = np.right_shift(np.bitwise_and(hdr_data_arr[:,5],16),4)
         self.reset_enable = np.right_shift(np.bitwise_and(hdr_data_arr[:,5],32),5)
 
