@@ -5,7 +5,7 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-03-09 13:05:12
+# @Last Modified time: 2020-03-11 11:28:51
 #####################################################
 
 import os
@@ -16,6 +16,8 @@ from . import calibration_spectrum_fitting
 HDR_SIZE = 20 #bytes
 SPECTRAL_DATA_SIZE = 680 #bytes
 TIMING_DATA_SIZE = 60 #bytes
+
+SPACE_PACKET_HEADER_SIZE = 24 #bytes
 
 
 class solexs_header():
@@ -204,42 +206,76 @@ class SDD_data_structure():
         self.temporal_data = solexs_lightcurve(temporal_data_arr_sdd)
     
 
+class space_packet_header():
+    def __init__(self,space_packet_header_data):
+        self.version_number = np.bitwise_and(space_packet_header[:,0],224)
+        self.packet_type = np.bitwise_and(space_packet_header[:,0],16)
+        self.sec_hdr_flag = np.bitwise_and(space_packet_header[:,0],8)
+        """
+        NOT COMPLETE
+        """
+
+
+
 
 class read_solexs_binary_data():
     """
-    Read SoLEXS binary data and segregate header, spectral and timing data.
+    Read SoLEXS binary data and segregate header, spectral and timing data. Data Types can be "Raw", "SP" (Space Packet)
     Output: SDD data structure
     """
 
-    def __init__(self,input_filename):
+    def __init__(self,input_filename,data_type='Raw'):
         self.input_filename = input_filename
-        self.data_type = 'Raw'
+        self.data_type = data_type#'Raw'
 
-        # HDR_SIZE = 20 #bytes
-        # SPECTRAL_DATA_SIZE = 680 #bytes
-        # TIMING_DATA_SIZE = 60 #bytes
+        if self.data_type = 'Raw':
 
-        self.packet_size = HDR_SIZE + SPECTRAL_DATA_SIZE + TIMING_DATA_SIZE
+            self.packet_size = HDR_SIZE + SPECTRAL_DATA_SIZE + TIMING_DATA_SIZE
 
-        # if not os.path.isfile(filename):
+            # if not os.path.isfile(filename):
 
-        file_size = os.path.getsize(input_filename)
-        self.n_data_packets = int(np.floor(os.path.getsize(input_filename)/self.packet_size))
+            file_size = os.path.getsize(input_filename)
+            self.n_data_packets = int(np.floor(os.path.getsize(input_filename)/self.packet_size))
 
-        if np.mod(file_size,self.packet_size)==0:
-            self.left_over_data_flag = 0
-        else:
-            self.left_over_data_flag = 1
+            if np.mod(file_size,self.packet_size)==0:
+                self.left_over_data_flag = 0
+            else:
+                self.left_over_data_flag = 1
 
-        data_full = self.read_file()
+            data_full = self.read_file()
 
-        det_id = np.bitwise_and(data_full[:,5],1)
-        data_sdd1 = data_full[det_id==0,:]
-        data_sdd2 = data_full[det_id==1,:]
+            det_id = np.bitwise_and(data_full[:,5],1)
+            data_sdd1 = data_full[det_id==0,:]
+            data_sdd2 = data_full[det_id==1,:]
 
+            self.SDD1 = SDD_data_structure(data_sdd1)
+            self.SDD2 = SDD_data_structure(data_sdd2)
 
-        self.SDD1 = SDD_data_structure(data_sdd1)
-        self.SDD2 = SDD_data_structure(data_sdd2)
+        if self.data_type = 'SP':
+
+            self.packet_size = SPACE_PACKET_HEADER_SIZE + HDR_SIZE + SPECTRAL_DATA_SIZE + TIMING_DATA_SIZE  
+
+            # if not os.path.isfile(filename):
+
+            file_size = os.path.getsize(input_filename)
+            self.n_data_packets = int(np.floor(os.path.getsize(input_filename)/self.packet_size))
+
+            if np.mod(file_size,self.packet_size)==0:
+                self.left_over_data_flag = 0
+            else:
+                self.left_over_data_flag = 1
+
+            data_full = self.read_file()
+
+            space_packet_header_data = data_full[:,:SPACE_PACKET_HEADER_SIZE]
+            data_full = data_full[:,SPACE_PACKET_HEADER_SIZE:]
+
+            det_id = np.bitwise_and(data_full[:,5],1)
+            data_sdd1 = data_full[det_id==0,:]
+            data_sdd2 = data_full[det_id==1,:]
+
+            self.SDD1 = SDD_data_structure(data_sdd1)
+            self.SDD2 = SDD_data_structure(data_sdd2)            
 
 
     def read_file(self):
