@@ -5,7 +5,7 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-03-11 11:28:51
+# @Last Modified time: 2020-03-11 11:42:18
 #####################################################
 
 import os
@@ -228,7 +228,7 @@ class read_solexs_binary_data():
         self.input_filename = input_filename
         self.data_type = data_type#'Raw'
 
-        if self.data_type = 'Raw':
+        if self.data_type == 'Raw':
 
             self.packet_size = HDR_SIZE + SPECTRAL_DATA_SIZE + TIMING_DATA_SIZE
 
@@ -251,7 +251,7 @@ class read_solexs_binary_data():
             self.SDD1 = SDD_data_structure(data_sdd1)
             self.SDD2 = SDD_data_structure(data_sdd2)
 
-        if self.data_type = 'SP':
+        if self.data_type == 'SP':
 
             self.packet_size = SPACE_PACKET_HEADER_SIZE + HDR_SIZE + SPECTRAL_DATA_SIZE + TIMING_DATA_SIZE  
 
