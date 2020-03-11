@@ -5,7 +5,7 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-03-11 11:42:18
+# @Last Modified time: 2020-03-11 16:16:54
 #####################################################
 
 import os
@@ -208,12 +208,29 @@ class SDD_data_structure():
 
 class space_packet_header():
     def __init__(self,space_packet_header_data):
-        self.version_number = np.bitwise_and(space_packet_header[:,0],224)
-        self.packet_type = np.bitwise_and(space_packet_header[:,0],16)
-        self.sec_hdr_flag = np.bitwise_and(space_packet_header[:,0],8)
-        """
-        NOT COMPLETE
-        """
+        self.version_number = np.bitwise_and(space_packet_header_data[:,0],224) #0
+        self.packet_type = np.bitwise_and(space_packet_header_data[:,0],16) #0
+        self.sec_hdr_flag = np.right_shift(np.bitwise_and(space_packet_header_data[:,0],8),3) #1
+
+        self.APID = np.bitwise_and(space_packet_header_data[:,0],7)*2**8 + space_packet_header_data[:,1] #180
+
+        self.packet_sequence_flag = np.right_shift(np.bitwise_and(space_packet_header_data[:,2],192),6) #11
+
+        self.packet_sequence_count = np.bitwise_and(space_packet_header_data[:,2],63)*2**8 + space_packet_header_data[:,3] #sequential
+
+        packet_length1 = np.fliplr(space_packet_header_data[:,4:6]).copy()
+        packet_length1.dtype = 'uint16'
+        self.packet_length = packet_length1[:,0] #775
+
+        self.DHT = space_packet_header_data[:,9]*2**32 + space_packet_header_data[:,10]*2**24 + space_packet_header_data[:,11]*2**16 + space_packet_header_data[:,12]*2**8 + space_packet_header_data[:,13]
+
+        OBT1 = np.fliplr(space_packet_header_data[:,14:22]).copy()
+        OBT1.dtype = 'uint64'
+        self.OBT = OBT1[:,0]
+
+        session_id1 = np.fliplr(space_packet_header_data[:,22:]).copy()
+        session_id1.dtype = 'uint16'
+        self.session_id = session_id1[:,0]
 
 
 
@@ -275,7 +292,9 @@ class read_solexs_binary_data():
             data_sdd2 = data_full[det_id==1,:]
 
             self.SDD1 = SDD_data_structure(data_sdd1)
-            self.SDD2 = SDD_data_structure(data_sdd2)            
+            self.SDD2 = SDD_data_structure(data_sdd2)
+
+            self.SP_header = space_packet_header(space_packet_header_data)            
 
 
     def read_file(self):
