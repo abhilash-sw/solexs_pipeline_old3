@@ -5,7 +5,7 @@
 # @File Name: binary_read.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2020-03-11 16:16:54
+# @Last Modified time: 2020-03-18 14:17:46
 #####################################################
 
 import os
@@ -57,7 +57,7 @@ class solexs_header():
         ref_count1 = np.fliplr(hdr_data_arr[:,6:10]).copy()
         ref_count1.dtype = 'uint32'
 
-        self.ref_count = np.bitwise_and(ref_count1[:,0],134217727) 
+        self.ref_count = np.bitwise_and(ref_count1[:,0],134217724)#134217727) 
 
         #shaped pulse baseline upload
         shaped_pulse_baseline1 = np.fliplr(hdr_data_arr[:,10:12]).copy()
@@ -67,7 +67,7 @@ class solexs_header():
         #timing_channel_energy_selection_window_threshold_lower
         timing_channel_thresh_lower1 = np.fliplr(hdr_data_arr[:,12:14]).copy()
         timing_channel_thresh_lower1.dtype = 'uint16'
-        self.timing_channel_thresh_lower = timing_channel_thresh_lower1[:,0]
+        self.timing_channel_thresh_lower = np.right_shift(np.bitwise_and(timing_channel_thresh_lower1[:,0],65408),7)#*8      #timing_channel_thresh_lower1[:,0]
 
         #cooler current
         self.cooler_current = hdr_data_arr[:,14]        
@@ -81,7 +81,7 @@ class solexs_header():
         #timing_channel_energy_selection_window_threshold_higher
         timing_channel_thresh_higher1 = np.fliplr(hdr_data_arr[:,18:20]).copy()
         timing_channel_thresh_higher1.dtype = 'uint16'
-        self.timing_channel_thresh_higher = timing_channel_thresh_higher1[:,0]
+        self.timing_channel_thresh_higher = np.right_shift(np.bitwise_and(timing_channel_thresh_higher1[:,0],65408),7)#*8     #timing_channel_thresh_higher1[:,0]
 
         #fpga data subtraction
         self.input_data_subtraction = np.right_shift(np.bitwise_and(hdr_data_arr[:,5],192),4) + np.right_shift(np.bitwise_and(hdr_data_arr[:,6],128),6) + np.right_shift(np.bitwise_and(hdr_data_arr[:,17],128),7)
@@ -89,6 +89,9 @@ class solexs_header():
         #gain selection
         self.gain = np.bitwise_and(hdr_data_arr[:,17],127)
 
+        ## flare threshold for trigger
+        flare_threshold1 = np.bitwise_and(ref_count1[:,0],3)*2**14 + np.bitwise_and(timing_channel_thresh_lower1[:,0],127)*2**7+ np.bitwise_and(timing_channel_thresh_higher1[:,0],127) #*8 for actual number
+        self.flare_threshold = flare_threshold1*8
 
 
 
