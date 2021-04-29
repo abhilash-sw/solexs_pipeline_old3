@@ -5,7 +5,7 @@
 # @File Name: calibration_fit_routines.py
 # @Project: solexs_pipeline
 
-# @Last Modified time: 2021-04-08 14:43:42
+# @Last Modified time: 2021-04-29 18:17:37
 #####################################################
 
 import numpy as np
@@ -81,6 +81,9 @@ def e_ch(ch,m,c):
     return energy
 
 def e_ch_solexs(ch,m,c):
+    if not isinstance(ch, (list, np.ndarray)):
+        ch = [ch]
+
     ch_512 = []
     for chi in ch:
         if chi<=167:
@@ -90,6 +93,8 @@ def e_ch_solexs(ch,m,c):
 
     ch_512 = np.array(ch_512)
     energy = ch_512*m+c
+    if len(energy)==1:
+        energy = energy[0]
     return energy
 
 def fit_e_ch(ene_peak,ch_peak,ch_peak_err=None):
